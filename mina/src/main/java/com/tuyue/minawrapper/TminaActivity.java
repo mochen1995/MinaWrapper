@@ -20,7 +20,7 @@ import com.tuyue.minawrapper.socketManage.SocketEntity;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-public class MainActivity extends AppCompatActivity {
+public class TminaActivity extends AppCompatActivity {
     private android.widget.EditText edit1;
     private android.widget.EditText edit2;
     private android.widget.Button btn1;
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_tmina);
         EventBus.getDefault().register(this);
         this.tv2 = (TextView) findViewById(R.id.tv2);
         this.btn1 = (Button) findViewById(R.id.btn1);
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 ConnectContacts.IP = ip;
                 ConnectContacts.PORT = port;
                 //开启连接服务
-                Intent intent = new Intent(MainActivity.this, ConnectService.class);
+                Intent intent = new Intent(TminaActivity.this, ConnectService.class);
                 startService(intent);
             }
         });
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!"未连接".equals(tv2.getText())) {
-                    Toast.makeText(MainActivity.this, edit2.getText().toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TminaActivity.this, edit2.getText().toString(), Toast.LENGTH_SHORT).show();
 //                        String encode = URLEncoder.encode(edit2.getText().toString(), "utf-8");
                     SessionManager.getmInstance().writeToServer(edit2.getText().toString());
                 }
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        stopService(new Intent(MainActivity.this, ConnectService.class));
+        stopService(new Intent(TminaActivity.this, ConnectService.class));
         unregisterReceiver(redceiver);
     }
     @Subscribe
