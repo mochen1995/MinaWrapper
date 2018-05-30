@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.github.dcendents.android-maven'
-group='com.github.mmcc'
+group='com.github.mochen1995'
 android {
     compileSdkVersion 26
     defaultConfig {
