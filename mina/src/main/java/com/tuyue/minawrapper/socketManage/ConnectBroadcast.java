@@ -32,6 +32,13 @@ public class ConnectBroadcast extends BroadcastReceiver {
         } else {
             socketEntity.status = ConnectContacts.STATE_MESSAGE;
             socketEntity.content = intent.getStringExtra(ConnectContacts.STATE_MESSAGE);
+           /* Bundle extras = intent.getExtras();
+            Bitmap b = extras.getParcelable("img");
+
+            if (b!=null)
+            {
+                socketEntity.bitmap = b;
+            }*/
         }
         EventBus.getDefault().post(socketEntity);
     }

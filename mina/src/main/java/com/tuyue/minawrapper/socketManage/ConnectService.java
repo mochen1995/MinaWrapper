@@ -7,6 +7,8 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import org.greenrobot.eventbus.EventBus;
+
 /**
  * 项目名：TestModuleApp
  * 包名：com.tuyue.yinghuo
@@ -74,9 +76,12 @@ public class ConnectService extends Service {
                     //当请求成功的时候,跳出循环
                     break;
                 }
-                Intent intent = new Intent(ConnectManager.BROADCAST_ACTION);
+                SocketEntity socketEntity = new SocketEntity();
+                socketEntity.status = ConnectContacts.STATE_WAIT; //正在连接
+                EventBus.getDefault().post(socketEntity);
+             /*   Intent intent = new Intent(ConnectManager.BROADCAST_ACTION);
                 intent.putExtra(ConnectContacts.STATE_WAIT,"正在连接服务器...");
-                sendBroadcast(intent);
+                sendBroadcast(intent);*/
                 try {
                     Thread.sleep(3000);
                 } catch (Exception e) {

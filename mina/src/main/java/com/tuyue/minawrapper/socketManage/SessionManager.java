@@ -1,6 +1,16 @@
 package com.tuyue.minawrapper.socketManage;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
+
+import com.tuyue.minawrapper.socketManage.domain.MinaMsgHead;
+
+import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 /**
  * 项目名：TestModuleApp
@@ -44,6 +54,88 @@ public class SessionManager {
         if (ioSession != null) {
             ioSession.write(msg);
         }
+    }
+
+    //写入byte数组 1内容 2内容长度 ，3内容类型  1消息 2图片
+    public void write(byte[] data){
+        byte[] sendHeader = new byte[64];
+        String header = "{\"ClientType\": 2,\"DataLen\":"+data.length+",\"DataType\":"+Event.EV_SEND_MESSAGE+"}";
+        byte[] headerBytes = header.getBytes();
+
+        for (int i = 0; i < headerBytes.length; i++) {
+            sendHeader[i] = headerBytes[i];
+        }
+        if (ioSession!=null)
+        {
+            ioSession.write(IoBuffer.wrap(sendHeader));
+            ioSession.write(IoBuffer.wrap(data));
+        }
+       /* if (type==1&&data.length!=4)
+        {
+            byte[] b = new byte[4];
+            for (int i = 0; i < data.length; i++) {
+                b[i] = data[i];
+            }
+            if (ioSession != null){
+                ioSession.write(IoBuffer.wrap(b));//关键，传递数组的关键
+            }
+        }else if (type==2)
+        {
+            if (ioSession != null){
+                ioSession.write(IoBuffer.wrap(data));//关键，传递数组的关键
+            }
+        }*/
+    }
+    public void writeToServer(IoBuffer buffer){
+        if(ioSession!=null){
+            buffer.flip();
+            ioSession.write(buffer);
+        }
+    }
+    public void writeFile(String path){
+        File file = new File(path);
+        if (file.exists())
+        {
+            Log.e("tag", "path = "+file.getAbsolutePath());
+            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+            byte[] sendHeader = new byte[128];
+            String header = "{\"ClientType\": 2,\"DataLen\":"+baos.size()+",\"DataType\":"+Event.EV_SEND_IMG+"}";
+            Log.e("tag", "header = "+header);
+            byte[] headerBytes = header.getBytes();
+            for (int i = 0; i < headerBytes.length; i++) {
+                sendHeader[i] = headerBytes[i];
+            }
+            if (ioSession != null){
+                ioSession.write(IoBuffer.wrap(sendHeader));
+                ioSession.write(IoBuffer.wrap(baos.toByteArray()));//关键，传递数组的关键
+            }
+        }else {
+            Log.e("tag", "文件不存在");
+        }
+
+    }
+    public void writeMsg(MinaMsgHead head,byte[] content){
+        /**
+         * 假定消息格式为：消息头（一个short类型：表示事件号、一个int类型：表示消息体的长度）+消息体
+         */
+      /*  MinaMsgHead msgHead = new MinaMsgHead();
+        msgHead.event = Event.EV_C_S_TEST;
+        msgHead.bodyLen = 0;//因为消息体是空的所以填0，根据消息体的长度而变*/
+
+        Log.e("tag", "发送的头："+head);
+        Log.e("tag", "发送的内容长度："+content.length);
+        //创建一个缓冲，缓冲大小为:消息头长度(6位)+消息体长度
+        IoBuffer buffer = IoBuffer.allocate(8+head.bodyLen);
+        //把消息头put进去
+        buffer.putInt(head.bodyLen);
+        buffer.putInt(head.event);
+        //把消息体put进去
+        buffer.put(content);
+        //发送
+        writeToServer(buffer);
     }
 
     /**

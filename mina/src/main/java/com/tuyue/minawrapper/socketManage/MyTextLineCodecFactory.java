@@ -16,13 +16,13 @@ import org.apache.mina.filter.codec.ProtocolEncoder;
 
 public class MyTextLineCodecFactory implements ProtocolCodecFactory {
 
-    private final TestEnCoder encoder;
-    private final TestDecoder decoder;
+    private final MyDataEncoder encoder;
+    private final MyDataDecoder decoder;
 
     public MyTextLineCodecFactory() {
         // 使用自定义编码/解码类
-        encoder = new TestEnCoder();
-        decoder = new TestDecoder();
+        encoder = new MyDataEncoder();
+        decoder = new MyDataDecoder();
 
     }
     @Override

@@ -14,6 +14,7 @@ public class ConnectContacts {
     public static final String STATE_SUCCESS = "success";
     public static final String STATE_MESSAGE = "message";
     public static final String STATE_CLOSE = "close";
+    public static final String STATE_RECONNECT = "reconnect";
     public static String IP = "";
     public static int PORT = 0;
 }
