@@ -58,7 +58,7 @@ public class HandlerEvent {
 
         Log.e("tag", "消息头："+msgHead);
         switch (msgHead.event){//根据事件号解析消息体内容
-            case Event.EV_RECIEVE_MESSAGE:   //当前事件是消息
+            case 101:   //当前事件是消息
                 byte[] by = new byte[msgHead.bodyLen];
                 buf.get(by, 0, by.length);
                 String json = new String(by, "GBK").trim();
@@ -77,12 +77,12 @@ public class HandlerEvent {
                     e.printStackTrace();
                 }
                 break;
-            case Event.EV_RECIEVE_IMG:
+            case 102:
                 byte[] imgb = new byte[msgHead.bodyLen];
                 buf.get(imgb, 0, imgb.length);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(imgb, 0, imgb.length);
                 SocketEntity socketEntity = new SocketEntity();
-                socketEntity.dataFlag =  Event.EV_RECIEVE_IMG;
+                socketEntity.dataFlag =  102;
                 socketEntity.status = ConnectContacts.STATE_MESSAGE; //属于消息
                 socketEntity.bitmap = bitmap;
                 EventBus.getDefault().post(socketEntity);

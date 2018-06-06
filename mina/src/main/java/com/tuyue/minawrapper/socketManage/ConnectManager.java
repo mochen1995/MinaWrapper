@@ -130,8 +130,9 @@ public class ConnectManager {
         @Override
         public void messageReceived(IoSession session, Object message) throws Exception {
 
+            Log.e("tag", "收到数据·············");
             IoBuffer ioBuffer = (IoBuffer) message;
-            HandlerEvent.getInstance().handle(ioBuffer);
+            HandlerEvent2.getInstance().handle(ioBuffer);
 
             /*if (oos==null)
             {

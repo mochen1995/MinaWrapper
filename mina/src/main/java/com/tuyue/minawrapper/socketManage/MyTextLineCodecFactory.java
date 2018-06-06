@@ -17,12 +17,12 @@ import org.apache.mina.filter.codec.ProtocolEncoder;
 public class MyTextLineCodecFactory implements ProtocolCodecFactory {
 
     private final MyDataEncoder encoder;
-    private final MyDataDecoder decoder;
+    private final MyDataDecoder2 decoder;
 
     public MyTextLineCodecFactory() {
         // 使用自定义编码/解码类
         encoder = new MyDataEncoder();
-        decoder = new MyDataDecoder();
+        decoder = new MyDataDecoder2();
 
     }
     @Override

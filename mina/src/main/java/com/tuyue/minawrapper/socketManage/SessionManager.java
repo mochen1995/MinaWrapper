@@ -8,6 +8,8 @@ import com.tuyue.minawrapper.socketManage.domain.MinaMsgHead;
 
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -57,18 +59,28 @@ public class SessionManager {
     }
 
     //写入byte数组 1内容 2内容长度 ，3内容类型  1消息 2图片
-    public void write(byte[] data){
-        byte[] sendHeader = new byte[64];
-        String header = "{\"ClientType\": 2,\"DataLen\":"+data.length+",\"DataType\":"+Event.EV_SEND_MESSAGE+"}";
-        byte[] headerBytes = header.getBytes();
-
-        for (int i = 0; i < headerBytes.length; i++) {
-            sendHeader[i] = headerBytes[i];
-        }
-        if (ioSession!=null)
-        {
-            ioSession.write(IoBuffer.wrap(sendHeader));
-            ioSession.write(IoBuffer.wrap(data));
+    public void write(byte[] data,int flag){
+        byte[] sendHeader = new byte[264];
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("socket_client_type",2);
+            jsonObject.put("socket_header_msgLength",data.length);
+            jsonObject.put("socket_header_msgFlag",flag);
+            jsonObject.put("socket_headerFileName",null);
+            String header = jsonObject.toString();
+//        String header = "{\"socket_client_type\": 2,\"socket_header_msgLength\":"+data.length+",\"socket_header_msgFlag\":"+flag+",\"socket_headerFileName\":" + fileName +"}";
+            Log.e("tag", "header = "+header);
+            byte[] headerBytes = header.getBytes();
+            for (int i = 0; i < headerBytes.length; i++) {
+                sendHeader[i] = headerBytes[i];
+            }
+            if (ioSession!=null)
+            {
+                ioSession.write(IoBuffer.wrap(sendHeader));
+                ioSession.write(IoBuffer.wrap(data));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
        /* if (type==1&&data.length!=4)
         {
@@ -100,18 +112,29 @@ public class SessionManager {
             Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] sendHeader = new byte[264];
 
-            byte[] sendHeader = new byte[128];
-            String header = "{\"ClientType\": 2,\"DataLen\":"+baos.size()+",\"DataType\":"+Event.EV_SEND_IMG+"}";
-            Log.e("tag", "header = "+header);
-            byte[] headerBytes = header.getBytes();
-            for (int i = 0; i < headerBytes.length; i++) {
-                sendHeader[i] = headerBytes[i];
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("socket_client_type",2);
+                jsonObject.put("socket_header_msgLength",baos.size());
+                jsonObject.put("socket_header_msgFlag",1);
+                jsonObject.put("socket_headerFileName",file.getName());
+                String header = jsonObject.toString();
+//                String header = "{\"socket_client_type\": 2,\"socket_header_msgLength\":"+baos.size()+",\"socket_header_msgFlag\":"+1+",\"socket_headerFileName\":" + file.getName() +"}";
+                Log.e("tag", "header = "+header);
+                byte[] headerBytes = header.getBytes();
+                for (int i = 0; i < headerBytes.length; i++) {
+                    sendHeader[i] = headerBytes[i];
+                }
+                if (ioSession != null){
+                    ioSession.write(IoBuffer.wrap(sendHeader));
+                    ioSession.write(IoBuffer.wrap(baos.toByteArray()));//关键，传递数组的关键
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            if (ioSession != null){
-                ioSession.write(IoBuffer.wrap(sendHeader));
-                ioSession.write(IoBuffer.wrap(baos.toByteArray()));//关键，传递数组的关键
-            }
+
         }else {
             Log.e("tag", "文件不存在");
         }

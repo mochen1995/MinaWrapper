@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.tuyue.minawrapper.socketManage.ConnectContacts;
 import com.tuyue.minawrapper.socketManage.ConnectService;
-import com.tuyue.minawrapper.socketManage.Event;
 import com.tuyue.minawrapper.socketManage.SessionManager;
 import com.tuyue.minawrapper.socketManage.SocketEntity;
 
@@ -56,10 +55,10 @@ public class TminaActivity extends AppCompatActivity {
                 if (!"未连接".equals(tv2.getText())) {
                     Toast.makeText(TminaActivity.this, edit2.getText().toString(), Toast.LENGTH_SHORT).show();
                    //发内容 DataFlag : Event.EV_RECIEVE_MESSAGE->需要服务器返回内容信息，Event.EV_RECIEVE_IMG->需要服务器返回图片
-                    String content = "{\"DataFlag\":"+ Event.EV_RECIEVE_IMG+", \"Data\":{\"username\":\"admin\", \"password\":\"123456789\"}}";
-                    SessionManager.getmInstance().write(content.getBytes());
+                    String content = "{\"username\":\"admin\", \"password\":\"123456789\",\"code\":1}";
+                    SessionManager.getmInstance().write(content.getBytes(),102);
                     //发图片
-                    SessionManager.getmInstance().writeFile("/mnt/sdcard/tencent/MicroMsg/WeiXin/wx_camera_1527070621921.jpg");
+//                    SessionManager.getmInstance().writeFile("/mnt/sdcard/tencent/MicroMsg/WeiXin/wx_camera_1527070621921.jpg");
                 }
             }
         });
