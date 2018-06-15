@@ -66,7 +66,7 @@ public class SessionManager {
             jsonObject.put("socket_client_type",2);
             jsonObject.put("socket_header_msgLength",data.length);
             jsonObject.put("socket_header_msgFlag",flag);
-            jsonObject.put("socket_headerFileName",null);
+            jsonObject.put("socket_headerFileName","");
             String header = jsonObject.toString();
 //        String header = "{\"socket_client_type\": 2,\"socket_header_msgLength\":"+data.length+",\"socket_header_msgFlag\":"+flag+",\"socket_headerFileName\":" + fileName +"}";
             Log.e("tag", "header = "+header);
